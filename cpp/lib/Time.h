@@ -2,7 +2,6 @@
 // Primitive Time as double. Seconds with fractional sub-seconds
 //==============================================================================
 #pragma once
-#include "uniq.h"
 namespace uniq {
 
 struct Time {
@@ -132,13 +131,5 @@ const double CLOCK_CYCLE = NANO / 2.4; // todo: dynamic update
 inline Time CpuTime() { return (ticks()-START_TICKS) * CLOCK_CYCLE; } // 13ns 
 inline Time CpuTime(Time prev) { return CpuTime()-prev;}
 
-// tests =======================================================================
-TEST(Time) {
-  CHECK(sizeof(Time) == sizeof(double));
-  CHECK(u64(CLOCKS_PER_SEC) == MEGA);
-
-  Time t;
-  CHECK(t.str() == t.ctime());
-}
 
 }// uniq • Released under GPL 3.0
