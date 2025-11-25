@@ -263,5 +263,18 @@ TEST(Digit){
   // rotation ===================================================================
   CHECK(Digit(1).rotl(1) == (digit(1) << 1 | digit(1) >> (BITS(digit)-1)));
   CHECK(Digit(1).rotr(1) == (digit(1) >> 1 | digit(1) << (BITS(digit)-1)));
+  
+  // post-increment/decrement return values ====================================
+  Digit d1(5); CHECK(d1++ == 5 && d1 == 6);
+  Digit d2(5); CHECK(d2-- == 5 && d2 == 4);
+  Digit d3(10); Digit d4 = d3++; CHECK(d4 == 10 && d3 == 11);
+  Digit d5(10); Digit d6 = d5--; CHECK(d6 == 10 && d5 == 9);
+  
+  // edge cases =================================================================
+  Digit e1(SIZE_MAX); CHECK(e1.size() > 0);
+  Digit e2(SIZE_MAX-1); CHECK(e2.size() > 0);
+  CHECK(Digit(0).format(2) == "0");
+  CHECK(Digit(1).format(2) == "1");
+  CHECK(Digit(SIZE_MAX).format(16).length() > 0);
 };
 }; // namespace uniq
