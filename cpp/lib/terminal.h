@@ -1,7 +1,4 @@
 #pragma once
-#include "std.h"
-// #include "numtypes.h"
-#include "utils.h"
 namespace uniq {
 
 const string RST("\033[0m"); // reset
@@ -52,29 +49,6 @@ char getch(){ // read a character from stdin without waiting for enter
   char input = getchar(); 
   r = system("stty cooked"); 
   return input;
-}
-
-string exception_message() // https://stackoverflow.com/a/3641809/9464885
-{
-  try { throw; }// rethrow_exception(eptr); }
-  catch (const exception &e) { return e.what()   ; }
-  catch (const string    &e) { return e          ; }
-  catch (const char      *e) { return e          ; }
-  catch (const int        i) { return to_string(i); }
-  catch (const long       l) { return to_string(l); }
-  catch (...)                { return "unknown exception"; }
-}
-
-void handle_exception(){
-  cerr << exception_message() << "\n";  
-}
-
-template <typename... Args> 
-string sstr(Args &&... args )
-{
-    ostringstream ss;
-    ( (ss << std::dec) << ... << args );
-    return ss.str();
 }
 
 template <typename... Args> 

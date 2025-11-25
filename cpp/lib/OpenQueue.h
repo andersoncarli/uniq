@@ -1,7 +1,7 @@
 // OpenQueue - A Thread-safe Queue using mutexes and condition variables.
 // Used for speed comparison. https://stackoverflow.com/a/16075550/9464885
 #pragma once
-#include "Actor.h"
+#include "uniq.h"
 namespace uniq {
 
 template <typename T> class OpenQueue : public Actor<T> {

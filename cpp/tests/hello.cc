@@ -21,7 +21,7 @@ int main() {
   run(hello, "World", 1e6); // say hello in paralel a million times
   
   pool().join();
-  
+  log("");
   return 0;
 }
 //uniq • Released under GPL 3.0

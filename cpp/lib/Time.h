@@ -25,10 +25,10 @@ struct Time {
 
   const string str() { 
     string s;
-    if (value < MICRO) s = sstr(nanos(), " ns");
-    else if (value < MILI) s = sstr(micros(), " µs");
-    else if (value < 1) s = sstr(milis(), " ms");
-    else if (value < 60) s = sstr(seconds(), " s");
+    if (value < MICRO) s = sstr(nanos(), "ns");
+    else if (value < MILI) s = sstr(micros(), "µs");
+    else if (value < 1) s = sstr(milis(), "ms");
+    else if (value < 60) s = sstr(seconds(), "s");
     else if (value < 60*60) s = fmt("M:%S");
     else if (value < 60*60*24) s = fmt("%H:%M:%S");
     else s = fmt("%a %b %e %H:%M:%S %Y");

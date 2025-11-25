@@ -68,7 +68,7 @@ TEST(OpenQueue){ // ================================================== OpenQueue
 }
 
 TEST(Log){ //=============================================================== Log
-  throw exception(); // to see an exception
+  // throw exception(); // to see an exception - commented out for normal test runs
   // Log say, err("cerr");
   // say("Hola!");
   // err("Olá");

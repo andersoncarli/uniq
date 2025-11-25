@@ -48,3 +48,5 @@ out/
 tools/
 sandbox/
 debug/
+cpp/.cursorindexingignore
+.specstory/

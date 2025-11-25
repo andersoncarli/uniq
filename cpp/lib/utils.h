@@ -3,6 +3,34 @@
 #include "numtypes.h"
 namespace uniq {
 
+string exception_message() // https://stackoverflow.com/a/3641809/9464885
+{
+  try { throw; }// rethrow_exception(eptr); }
+  catch (const exception &e) { return e.what()   ; }
+  catch (const string    &e) { return e          ; }
+  catch (const char      *e) { return e          ; }
+  catch (const int        i) { return to_string(i); }
+  catch (const long       l) { return to_string(l); }
+  catch (...)                { return "unknown exception"; }
+}
+
+void handle_exception(){
+  cerr << exception_message() << "\n";  
+}
+
+template <typename... Args> 
+string sstr(Args &&... args )
+{
+    ostringstream ss;
+    ( (ss << std::dec) << ... << args );
+    return ss.str();
+}
+
+template <typename... Args> 
+void check(bool expr, Args &&... args ){
+  if(!expr) throw invalid_argument(sstr(args...));
+}
+
 string format(const string s, ...) {
   va_list ap;
   char* fp = NULL;

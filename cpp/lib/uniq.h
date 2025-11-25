@@ -1,11 +1,11 @@
 #pragma once
 #include "std.h" // all std headers
 #include "unistd.h" // posix functions like usleep
-
-#include "terminal.h" // terminal printing with colors
 #include "numtypes.h" // basic numeric types
 #include "call.h" // lazy call & lambda utilities
 #include "utils.h" // rnd, format, join, repeat, trim ...
+#include "terminal.h" // terminal printing with colors
+
 #include "Named.h" // class with name
 #include "Time.h" // time primitive
 #include "Atomic.h" // basic atomic types
@@ -27,13 +27,13 @@
 // #include "Lazy.h" // lazy call
 // #include "WorkerPool.h" // A Worker with helpers
 // #include "Json.h" // Json primitive
-// #include "Digit.h" // big digit 
-// #include "Number.h" // big number
+#include "Digit.h" // big digit 
+#include "Number.h" // big number
 // #include "Timer.h" // hi-precision timer
 // #include "Any.h" // simpler std:any 
 // #include "Event.h" // event emitter
 #include "Color.h" // color primitive
-#include "sha256.h" // sha256 cryptographic function
+#include "sha256.h" // cryptographic function
 #include "fs.h" // filesystem utilities readFile, saveFile() ...
 
 //uniq • Released under GPL 3.0
