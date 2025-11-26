@@ -17,11 +17,20 @@ public:
     other.originalLength = 0;
   }
   Number(const string s, int base=10, string map=DIGITS) : originalLength(s.length()) {
-    Digit d(s, base, [&](digit ov, DigitOp op)->digit { 
+    assert(base>1 && base <= (int)map.length() && "Number() invalid base");
+    if(s.empty() || (s.length() == 1 && s[0] == '-')) {
+      digits.push_back(Digit(0));
+      signal = 1;
+      return;
+    }
+    bool negative = (s[0] == '-');
+    string num_str = negative ? s.substr(1) : s;
+    Digit d(num_str, base, [&](digit ov, DigitOp op)->digit { 
       digits.push_back(ov); 
       return 0;
     }, map);
     digits.push_back(d);
+    signal = negative ? -1 : 1;
   }
 
   inline int size() const { return digits.size(); }
@@ -33,10 +42,11 @@ public:
   }
 
   string format(int base=10, string map=DIGITS) const {
+    assert(base>1 && base <= (int)map.length() && "format() invalid base");
     if(digits.empty()) return string(1, map[0]);
     ostringstream ss;
-    // Digits are stored: [0]=most significant, [n]=least significant
-    // Format from most to least significant for display
+    // NOTE: Storage order is implementation-dependent. Format iterates [0..size-1]
+    // Each digit is formatted independently, so order is preserved from construction
     for(int i=0; i < digits.size(); i++)
       ss << digits[i].format(base, map);
     string result = ss.str();
@@ -208,12 +218,35 @@ public:
   }
 
   Number& operator <<= (const Number& n) {
-    if(n == Number(0)) return *this;
-    Number power_of_2(1);
-    for(Number i(0); i < n; ++i) {
-      power_of_2 = power_of_2 * Number(2);
+    if(n == Number(0) || isZero()) return *this;
+    if(n.bits() > 1000) throw FlowException(1, SHL); // Prevent excessive shifts
+    
+    // Convert shift amount to digit
+    digit shift_bits = 0;
+    if(n.size() == 1 && n.digits[0] < Digit(BITS(digit))) {
+      shift_bits = n.digits[0].value;
+    } else {
+      // Large shift - use multiplication fallback
+      Number power_of_2(1);
+      for(Number i(0); i < n; ++i) {
+        power_of_2 = power_of_2 * Number(2);
+        if(power_of_2.bits() > bits() + 1000) throw FlowException(1, SHL);
+      }
+      *this = *this * power_of_2;
+      return *this;
     }
-    *this = *this * power_of_2;
+    
+    if(shift_bits == 0) return *this;
+    
+    // Bit-level left shift
+    digit carry = 0;
+    for(int i = 0; i < size(); i++) {
+      digit ov = 0;
+      digit shifted = digits[i].shl(shift_bits, ov);
+      digits[i].value = shifted | carry;
+      carry = ov;
+    }
+    if(carry) digits.push_back(Digit(carry));
     return *this;
   }
 
@@ -223,12 +256,35 @@ public:
   }
 
   Number& operator >>= (const Number& n) {
-    if(n == Number(0)) return *this;
-    Number power_of_2(1);
-    for(Number i(0); i < n; ++i) {
-      power_of_2 = power_of_2 * Number(2);
+    if(n == Number(0) || isZero()) return *this;
+    
+    // Convert shift amount to digit
+    digit shift_bits = 0;
+    if(n.size() == 1 && n.digits[0] < Digit(BITS(digit))) {
+      shift_bits = n.digits[0].value;
+    } else {
+      // Large shift - use division fallback
+      Number power_of_2(1);
+      for(Number i(0); i < n; ++i) {
+        power_of_2 = power_of_2 * Number(2);
+      }
+      *this = *this / power_of_2;
+      return *this;
     }
-    *this = *this / power_of_2;
+    
+    if(shift_bits == 0) return *this;
+    
+    // Bit-level right shift
+    for(int i = size() - 1; i >= 0; i--) {
+      digit ov = 0;
+      digits[i].value = digits[i].shr(shift_bits, ov);
+      if(i > 0) {
+        digit carry_bits = ov << (BITS(digit) - shift_bits);
+        digits[i-1].value |= carry_bits;
+      }
+    }
+    // Remove leading zero digits
+    while(digits.size() > 1 && digits.back() == Digit(0)) digits.pop_back();
     return *this;
   }
 
@@ -371,6 +427,46 @@ Number gcd(const Number& a, const Number& b) {
 
 Number lcm(const Number& a, const Number& b) {
   return (a * b) / gcd(a, b);
+}
+
+Number sqrt(const Number& n) {
+  if(n.isZero()) return Number(0);
+  if(n.isOne()) return Number(1);
+  if(n < Number(0)) throw FlowException(1, DIV); // Negative sqrt
+  
+  Number low(1), high(n), result(0);
+  while(low <= high) {
+    Number mid = (low + high) / Number(2);
+    Number square = mid * mid;
+    if(square == n) return mid;
+    if(square < n) {
+      result = mid;
+      low = mid + Number(1);
+    } else {
+      high = mid - Number(1);
+    }
+  }
+  return result;
+}
+
+Number mod_pow(const Number& base, const Number& exp, const Number& mod) {
+  if(mod.isZero()) throw FlowException(1, MOD);
+  if(mod.isOne()) return Number(0);
+  if(exp.isZero()) return Number(1);
+  if(exp.isOne()) return base % mod;
+  
+  Number result(1);
+  Number b = base % mod;
+  Number e = exp;
+  
+  while(!e.isZero()) {
+    if((e % Number(2)) == Number(1)) {
+      result = (result * b) % mod;
+    }
+    e = e / Number(2);
+    b = (b * b) % mod;
+  }
+  return result;
 }
 
 // Number factorial(Number n) { return n <= 1 ? n : factorial(n - 1) * n; }

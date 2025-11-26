@@ -11,12 +11,13 @@ struct FlowException : public exception // ============== custom exception
 {
   digit value; 
   DigitOp op;
-  mutable string msg;
+  string msg;
   
-  FlowException(digit v, DigitOp op_){ value=v; op=op_;};
+  FlowException(digit v, DigitOp op_) : value(v), op(op_) {
+    msg = OpNames[op] + ":" + "overflow:" + to_string(value);
+  }
 
-	const char * what () const throw (){
-    msg = OpNames[op] + ":" + "overflow:" + to_string(value); 
+	const char * what () const throw () {
     return msg.c_str(); 
   }
 };
@@ -33,10 +34,12 @@ struct Digit { // ======================================================== Digit
   Digit(digit d=0) { value=d; }
   
   Digit(const string &s, const int base=10, callback cb=flow, string map=DIGITS){ 
+    assert(base>1 && base <= (int)map.length() && "Digit() invalid base");
     Digit v(0);
     for (auto c : s) {
       if(c==' ') continue;
-      auto d = map.find(c); assert(d != string::npos && "Digit() invalid number");
+      auto d = map.find(c); 
+      assert(d != string::npos && d < (digit)base && "Digit() invalid character for base");
       try { 
         v = v*Digit(base)+ Digit(d) ; 
       } catch(const FlowException& e) { 
@@ -46,7 +49,7 @@ struct Digit { // ======================================================== Digit
   }
 
   string format(int base=10, string map=DIGITS) const {
-    assert(base>1);
+    assert(base>1 && base <= (int)map.length() && "format() invalid base");
     if(value == 0) return string(1, map[0]);
     string s="";    
     digit v=value;
@@ -150,10 +153,10 @@ struct Digit { // ======================================================== Digit
   bool operator >  (int n) const { return value >  digit(n); }
   bool operator <= (int n) const { return value <= digit(n); }
   bool operator >= (int n) const { return value >= digit(n); }
-  bool operator &  (digit n) { return value & n; }
-  bool operator |  (digit n) { return value | n; }
-  bool operator ^  (digit n) { return value ^ n; }
-  bool operator ~  ()        { return ~value; }
+  Digit operator &  (digit n) const { return Digit(value & n); }
+  Digit operator |  (digit n) const { return Digit(value | n); }
+  Digit operator ^  (digit n) const { return Digit(value ^ n); }
+  Digit operator ~  () const { return Digit(~value); }
 
   bool operator [](digit k) const {return getbit(k); }
   // bool& operator [](digit k) {return setbit(k); }

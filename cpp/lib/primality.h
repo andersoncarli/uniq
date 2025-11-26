@@ -9,7 +9,7 @@ namespace uniq {
 vector<Number> sieve(int lim) {
   vector<bool> s(lim + 1, true);
   s[0] = s[1] = false;
-  int sqrt_lim = (int)sqrt(lim);
+  int sqrt_lim = (int)std::sqrt(lim);
   for(int i = 2; i <= sqrt_lim; i++) {
     if(s[i]) {
       for(int j = i * i; j <= lim; j += i) s[j] = false;
