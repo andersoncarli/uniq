@@ -1,0 +1,201 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "cmake build tests",
+      "options": {
+        "cwd": "${workspaceFolder}/out"
+      },
+      "command": "cmake -S ../tests -B . && make -j8",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "g++ build active file",
+      "command": "/usr/bin/g++",
+      "type": "shell",
+      "args": [
+        "${file}",
+        "-o",
+        "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+        "-I",
+        "${workspaceFolder}/lib",
+        "-I",
+        "${workspaceFolder}/libs",
+        "-std=c++17",
+        "-g",
+        "-rdynamic",
+        "-fpermissive",
+        "-Wfatal-errors", // stop on first error
+        "-fcompare-debug-second", // no notes
+
+        "-lpthread",
+        "-lbfd", // for backward.hpp
+        "-ldl", // for backward.hpp
+        "-ldw", // for backward.hpp
+
+        // "-fopenmp",
+        // "-msse3",
+        // "-lX11",
+        // "-lncurses",
+        // "-lOpenCL",
+        // "-lOpenGL",
+        // "-lglut",
+        // "-lglfw",
+        // "-lGLU",
+        // "-lGL",
+        // "-lGLEW",
+        // "-lGLAD",
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+    },
+    {
+      "label": "g++ build tests",
+      "command": "/usr/bin/g++",
+      "type": "shell",
+      "args": [
+        "${workspaceFolder}/tests/tests.cc",
+        "-o",
+        "${workspaceFolder}/bin/tests",
+        "-I",
+        "${workspaceFolder}/lib",
+        "-I",
+        "${workspaceFolder}/libs",
+        "-std=c++17",
+        "-g",
+        "-rdynamic",
+        "-fpermissive",
+        "-Wfatal-errors", // stop on first error
+        "-fcompare-debug-second", // no notes
+
+        "-lpthread",
+        // "-lbfd", // for backward.hpp
+        // "-ldl", // for backward.hpp
+        // "-ldw", // for backward.hpp
+
+        // "-fopenmp",
+        // "-msse3",
+        // "-lX11",
+        // "-lncurses",
+        // "-lOpenCL",
+        // "-lOpenGL",
+        // "-lglut",
+        // "-lglfw",
+        // "-lGLU",
+        // "-lGL",
+        // "-lGLEW",
+        // "-lGLAD",
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+    },
+    {
+      "label": "clang++ build active file",
+      "command": "/usr/bin/clang++",
+      "type": "shell",
+      "args": [
+        "${file}",
+        "-o",
+        "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+        "-I",
+        "${workspaceFolder}/lib",
+        "-I",
+        "${workspaceFolder}/libs",
+        "-std=c++17",
+        "-g",
+        "-rdynamic",
+        "-fpermissive",
+        "-Wfatal-errors", // stop on first error
+
+        "-lpthread",
+
+        "-lbfd", // for backward.hpp
+        "-ldl", // for backward.hpp
+        "-ldw", // for backward.hpp
+        // "-fopenmp",
+        // "-msse3",
+        // "-lX11",
+        // "-lncurses",
+        // "-lOpenCL",
+        // "-lOpenGL",
+        // "-lglut",
+        // "-lglfw",
+        // "-lGLU",
+        // "-lGL",
+        // "-lGLEW",
+        // "-lGLU",
+        // "-lGLAD",
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "clang++ build tests",
+      "command": "/usr/bin/clang++",
+      "type": "shell",
+      "args": [
+        "${workspaceFolder}/tests/tests.cc",
+        "-o",
+        "${workspaceFolder}/bin/tests",
+        "-I",
+        "${workspaceFolder}/lib",
+        "-I",
+        "${workspaceFolder}/libs",
+        
+        "-std=c++17",
+        "-g",
+        "-rdynamic",
+        "-fpermissive",
+        "-Wfatal-errors", // stop on first error
+
+        "-lpthread",
+        // "-lbfd", // for backward.hpp
+        // "-ldl", // for backward.hpp
+        // "-ldw", // for backward.hpp
+        // "-fopenmp",
+        // "-msse3",
+        // "-lX11",
+        // "-lncurses",
+        // "-lOpenCL",
+        // "-lOpenGL",
+        // "-lglut",
+        // "-lglfw",
+        // "-lGLU",
+        // "-lGL",
+        // "-lGLEW",
+        // "-lGLU",
+        // "-lGLAD",
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$gcc",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+  ]
+}

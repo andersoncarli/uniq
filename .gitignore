@@ -50,4 +50,5 @@ sandbox/
 debug/
 .cursorindexingignore
 .specstory/
+.test_build/
 

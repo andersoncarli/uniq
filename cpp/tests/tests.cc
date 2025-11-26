@@ -9,13 +9,14 @@ backward::SignalHandling sh;
 #include "State.h"
 #include "BigDigit.t.cc"
 // #include "BigNumberCore.t.cc"  // Old version - disabled
-#include "BigNumberCore2.t.cc"  // New version - testing
+// #include "BigNumberCore2.t.cc"  // New version - not found
 #include "BigCardinal.t.cc"
 #include "BigInteger.t.cc"
 #include "BigDecimal.t.cc"
+#include "BigNumber.t.cc"
 #include "BigPrime.t.cc"
 
 int main(){
-  uniq::SILENT_TESTS = 1; // omit success report
+  // uniq::SILENT_TESTS = 1; // omit success report
   quick_exit( uniq::runTests() );
 }
