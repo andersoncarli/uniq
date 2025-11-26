@@ -7,7 +7,10 @@ backward::SignalHandling sh;
 #include "uniq.h"
 
 #include "State.h"
-#include "primality.test.cpp"
+#include "BigDigit.t.cc"
+#include "BigCardinal.t.cc"
+#include "BigInteger.t.cc"
+#include "BigPrime.t.cc"
 
 int main(){
   uniq::SILENT_TESTS = 1; // omit success report

@@ -27,8 +27,8 @@
 // #include "Lazy.h" // lazy call
 // #include "WorkerPool.h" // A Worker with helpers
 // #include "Json.h" // Json primitive
-#include "Digit.h" // big digit 
-#include "Number.h" // big number
+#include "BigDigit.h" // big digit 
+#include "BigNumber.h" // big number
 // #include "Timer.h" // hi-precision timer
 // #include "Any.h" // simpler std:any 
 // #include "Event.h" // event emitter

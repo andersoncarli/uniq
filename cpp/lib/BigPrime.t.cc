@@ -1,4 +1,4 @@
-#include "primality.h"
+#include "BigPrime.h"
 #include "test.h"
 using namespace std;
 namespace uniq {
@@ -7,7 +7,7 @@ TEST(PrimalityTest) {
   initPrimality(200);
   
   struct TestCase {
-    Number n;
+    BigNumber n;
     bool expected;
   };
   
@@ -20,8 +20,8 @@ TEST(PrimalityTest) {
     {4, false}, {6, false}, {8, false}, {9, false}, {10, false},
     {15, false}, {21, false}, {25, false}, {100, false},
     // Large numbers
-    {pow(2, 31) - 1, true},
-    {Number("172947529"), false},
+    {BigInteger(pow(BigCardinal(2), BigCardinal(31)) - BigCardinal(1)), true},
+    {BigNumber("172947529"), false},
   };
   
   for(const auto& test : tests) {
@@ -36,7 +36,7 @@ TEST(PrimalityTest) {
     
     // Test firstFactor for composites
     if(!test.expected && test.n > 1) {
-      Number factor = firstFactor(test.n);
+      BigNumber factor = firstFactor(test.n);
       CHECK(factor > 1);
       CHECK(factor <= test.n);
       CHECK((test.n % factor) == 0);

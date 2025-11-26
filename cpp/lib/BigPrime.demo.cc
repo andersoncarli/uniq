@@ -1,4 +1,4 @@
-#include "primality.h"
+#include "BigPrime.h"
 #include "Time.h"
 #include <vector>
 #include <iomanip>
@@ -9,23 +9,23 @@ void runDemo() {
   initPrimality(200);
   
   cout << "\n" << string(80, '=') << "\n";
-  cout << "Primality Test - MR vs QR Comparison for Large Numbers\n";
+  cout << "Primality Test - MR vs QR Comparison for Large BigNumbers\n";
   cout << string(80, '=') << "\n\n";
   
   // Large primes
-  vector<pair<Number, string>> primes = {
-    {Number("2147483647"), "M31 (2^31-1)"},
-    {Number("37975227936943673922808872755445627854565536638199"), "RSA-100 Factor 1"},
-    {Number("40094690950920881030683735292761468389214899724061"), "RSA-100 Factor 2"},
+  vector<pair<BigNumber, string>> primes = {
+    {BigNumber("2147483647"), "M31 (2^31-1)"},
+    {BigNumber("37975227936943673922808872755445627854565536638199"), "RSA-100 Factor 1"},
+    {BigNumber("40094690950920881030683735292761468389214899724061"), "RSA-100 Factor 2"},
   };
   
   // Large composites  
-  vector<pair<Number, string>> composites = {
-    {Number("172947529"), "Carmichael"},
-    {Number("1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139"), "RSA-100"},
+  vector<pair<BigNumber, string>> composites = {
+    {BigNumber("172947529"), "Carmichael"},
+    {BigNumber("1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139"), "RSA-100"},
   };
   
-  cout << left << setw(30) << "Number" << setw(6) << "QR" << setw(6) << "MR" 
+  cout << left << setw(30) << "BigNumber" << setw(6) << "QR" << setw(6) << "MR" 
        << setw(15) << "QR (ms)" << setw(15) << "MR (ms)" << setw(15) << "Speedup" << "\n";
   cout << string(80, '-') << "\n";
   
