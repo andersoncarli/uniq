@@ -17,21 +17,21 @@ typedef int         i32;
 typedef long long   i64;
 typedef __int128_t i128;
 
-struct{int h:1; int v:7;} U7;
-struct{int h:2; int v:6;} U6;
-struct{int h:3; int v:6;} U5;
-struct{int h:4; int v:4;} U4;
-struct{int h:5; int v:3;} U3;
-struct{int h:6; int v:2;} U2;
-struct{int h:7; int v:1;} U1;
+struct{int h:1; int v:7;} U7 __attribute__((unused));
+struct{int h:2; int v:6;} U6 __attribute__((unused));
+struct{int h:3; int v:6;} U5 __attribute__((unused));
+struct{int h:4; int v:4;} U4 __attribute__((unused));
+struct{int h:5; int v:3;} U3 __attribute__((unused));
+struct{int h:6; int v:2;} U2 __attribute__((unused));
+struct{int h:7; int v:1;} U1 __attribute__((unused));
 
-struct{int s:1; /*h: 0*/ int v:7;} I7;
-struct{int s:1; int h:1; int v:6;} I6;
-struct{int s:1; int h:2; int v:6;} I5;
-struct{int s:1; int h:3; int v:4;} I4;
-struct{int s:1; int h:4; int v:3;} I3;
-struct{int s:1; int h:5; int v:2;} I2;
-struct{int s:1; int h:6; int v:1;} I1;
+struct{int s:1; /*h: 0*/ int v:7;} I7 __attribute__((unused));
+struct{int s:1; int h:1; int v:6;} I6 __attribute__((unused));
+struct{int s:1; int h:2; int v:6;} I5 __attribute__((unused));
+struct{int s:1; int h:3; int v:4;} I4 __attribute__((unused));
+struct{int s:1; int h:4; int v:3;} I3 __attribute__((unused));
+struct{int s:1; int h:5; int v:2;} I2 __attribute__((unused));
+struct{int s:1; int h:6; int v:1;} I1 __attribute__((unused));
 
 // floats base
 typedef float        f32;

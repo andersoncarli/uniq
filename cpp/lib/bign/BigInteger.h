@@ -4,6 +4,8 @@
 #include <sstream>
 #include <cassert>
 #include <iostream>
+#include <utility>
+#include <algorithm>
 namespace bign {
 
 class BigInteger : public BigCardinal {
@@ -14,6 +16,16 @@ public:
   BigInteger() : BigCardinal(), signal(1) {}
   BigInteger(digit n) : BigCardinal(n), signal(1) {}
   BigInteger(BigDigit n) : BigCardinal(n), signal(1) {}
+  BigInteger(i64 n) : BigCardinal(), signal(1) {
+    if(n < 0) {
+      BigCardinal::operator=(static_cast<digit>(-n));
+      signal = -1;
+    } else {
+      BigCardinal::operator=(static_cast<digit>(n));
+      signal = 1;
+    }
+  }
+  BigInteger(int n) : BigInteger(static_cast<i64>(n)) {}
   BigInteger(const BigCardinal& c) : BigCardinal(c), signal(1) {}
   BigInteger(const BigInteger& other) : BigCardinal(other), signal(other.signal) {}
   BigInteger(BigInteger&& other) noexcept : BigCardinal(std::move(other)), signal(other.signal) {
@@ -36,7 +48,7 @@ public:
       return;
     }
     digits_.clear(); // Clear the default zero from BigCardinal()
-    BigDigit d(num_str, base, [&](digit ov, DigitOp op)->digit { 
+    BigDigit d(num_str, base, [&](digit ov, DigitOp /*op*/)->digit { 
       digits_.push_back(ov); 
       return 0;
     }, map);
@@ -197,13 +209,13 @@ public:
     return r *= n; 
   }
 
-  pair<BigInteger, BigInteger> divide(const BigInteger& n) const {
+  std::pair<BigInteger, BigInteger> divide(const BigInteger& n) const {
     if(n.isZero()) throw FlowException(1, DIV);
-    if(isZero()) return make_pair(BigInteger(0), BigInteger(0));
+    if(isZero()) return std::make_pair(BigInteger(0), BigInteger(0));
     if(n.abs() == BigCardinal(1)) {
       BigInteger result(*this);
       result.signal = signal * n.signal;
-      return make_pair(result, BigInteger(0));
+      return std::make_pair(result, BigInteger(0));
     }
     
     i8 quotient_signal = (signal * n.signal > 0) ? 1 : -1;
@@ -214,7 +226,7 @@ public:
     
     if(abs_this < abs_n) {
       BigInteger remainder(*this);
-      return make_pair(BigInteger(0), remainder);
+      return std::make_pair(BigInteger(0), remainder);
     }
     
     auto [quotient_card, remainder_card] = abs_this.divide(abs_n);
@@ -225,7 +237,7 @@ public:
     remainder.signal = remainder_signal;
     if(remainder.isZero()) remainder.signal = 1;
     
-    return make_pair(quotient, remainder);
+    return std::make_pair(quotient, remainder);
   }
 
   BigInteger& operator /= (const BigInteger& n) {
@@ -304,7 +316,7 @@ public:
 
   BigInteger& operator = (BigInteger&& other) noexcept {
     if(this != &other) {
-      static_cast<BigCardinal&>(*this) = move(static_cast<BigCardinal&>(other));
+      static_cast<BigCardinal&>(*this) = std::move(static_cast<BigCardinal&>(other));
       signal = other.signal;
       other.signal = 1;
     }

@@ -1,10 +1,15 @@
 #include "BigNumberCore.h"
 #include "BigNumberNaive.h"
+#include "BigNumberKaratsuba.h"
 
 namespace bign {
 
 BigNumVariant BigNumberCore::createBest() {
-  // Currently only BigNumberNaive is available
+  // Prefer Karatsuba (higher priority) if available
+  BigNumberKaratsuba karatsuba;
+  if(karatsuba.available()) {
+    return std::make_unique<BigNumberKaratsuba>();
+  }
   return std::make_unique<BigNumberNaive>();
 }
 
@@ -14,6 +19,8 @@ BigNumVariant BigNumberCore::create(BigImpl type) {
   switch(type) {
     case BIG_NAIVE:
       return std::make_unique<BigNumberNaive>();
+    case BIG_KARATSUBA:
+      return std::make_unique<BigNumberKaratsuba>();
     default:
       return createBest();
   }

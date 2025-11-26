@@ -39,6 +39,7 @@ struct BigDigit { // ======================================================== Bi
   digit value=0;
 
   BigDigit(digit d=0) { value=d; }
+  BigDigit(const BigDigit& other) = default;  // Explicit copy constructor to avoid deprecation warning
   
   BigDigit(const std::string &s, const int base=10, callback cb=flow, std::string map=DIGITS){ 
     assert(base>1 && base <= (int)map.length() && "BigDigit() invalid base");

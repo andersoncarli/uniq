@@ -29,10 +29,10 @@ TEST(BigNumberCoreConstruction) {
 TEST(BigNumberCoreImplementationSelection) {
   BigNumberCore core;
   
-  // Test implementation name
+  // Test implementation name (BIG_AUTO now selects Karatsuba)
   const char* name = core.getImplementationName();
   CHECK(name != nullptr);
-  CHECK(std::string(name) == "BigNumberNaive");
+  CHECK(std::string(name) == "BigNumberKaratsuba" || std::string(name) == "BigNumberNaive");
   
   // Test hot swap
   core.setImplementation(BIG_NAIVE);

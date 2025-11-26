@@ -57,23 +57,23 @@ typedef union {f128 n; struct {u128 mantisa:112; u16 exponent:15; u8 s:1;} parts
 
 #define BITS(n) sizeof(n)*CHAR_BIT
 
-u32 rehash(u32 n){
+inline u32 rehash(u32 n){
   U32 r, s = {~n};
   r.a = s.b ^ s.c ^ s.d;
   r.b = s.c ^ s.d ^ s.a;
   r.c = s.d ^ s.a ^ s.b;
   r.d = s.a ^ s.b ^ s.c;
   return r.n;
-};
+}
 
-u64 rehash(u64 n){
+inline u64 rehash(u64 n){
   U64 r, s = {~n};
   r.a = s.b ^ s.c ^ s.d;
   r.b = s.c ^ s.d ^ s.a;
   r.c = s.d ^ s.a ^ s.b;
   r.d = s.a ^ s.b ^ s.c;
   return r.n;
-};
+}
 
 const u64 KILO = 1e3;  const double MILI = 1e-3; 
 const u64 MEGA = 1e6;  const double MICRO = 1e-6; 

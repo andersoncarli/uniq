@@ -22,6 +22,7 @@ echo "Compiling test framework and implementation files..."
 # Compile implementation files
 IMPL_FILES=(
   "BigNumberNaive.cpp"
+  "BigNumberKaratsuba.cpp"
   "BigNumberCore.cpp"
 )
 
@@ -43,6 +44,7 @@ echo "========================================"
 TEST_BINARY="$BUILD_DIR/bign_tests"
 $CXX $CXXFLAGS -o "$TEST_BINARY" tests.cc \
   "$BUILD_DIR/BigNumberNaive.o" \
+  "$BUILD_DIR/BigNumberKaratsuba.o" \
   "$BUILD_DIR/BigNumberCore.o" \
   $LDFLAGS || {
   echo "Failed to compile tests"

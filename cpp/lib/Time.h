@@ -2,6 +2,7 @@
 // Primitive Time as double. Seconds with fractional sub-seconds
 //==============================================================================
 #pragma once
+#include <iomanip>
 namespace uniq {
 
 struct Time {

@@ -56,12 +56,12 @@ TEST(BigDecimalArithmetic) {
   BigDecimal diff = a - b;
   CHECK(diff.format() == "55.56");
   
-  // Multiplication (123.45 * 67.89 = 8371.1205)
+  // Multiplication (123.45 * 67.89 = 8381.0205)
   BigDecimal prod = a * b;
   // Check that result has correct decimal places (2 + 2 = 4)
   CHECK(prod.getDecimalPlaces() == 4);
   // Check the numeric value - use comparison operator (handles alignment internally)
-  BigDecimal expected("8371.1205");
+  BigDecimal expected("8381.0205");
   CHECK(prod == expected);
   
   // Division

@@ -33,7 +33,7 @@ public:
       digits_.push_back(BigDigit(0));
       return;
     }
-    BigDigit d(s, base, [&](digit ov, DigitOp op)->digit { 
+    BigDigit d(s, base, [&](digit ov, DigitOp /*op*/)->digit { 
       digits_.push_back(ov); 
       return 0;
     }, map);

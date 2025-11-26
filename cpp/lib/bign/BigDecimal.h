@@ -314,7 +314,7 @@ public:
       int_str = "0" + int_str;
     }
     
-    if(int_str.length() == actual_places) {
+    if((int)int_str.length() == actual_places) {
       // All digits are fractional
       string result = "0." + int_str;
       // Remove trailing zeros

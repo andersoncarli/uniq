@@ -5,6 +5,7 @@
 #include "BigDigit.h"
 #include "IBigNumber.h"
 #include "BigNumberNaive.h"  // Need full definition for variant
+#include "BigNumberKaratsuba.h"  // Karatsuba multiplication
 
 namespace bign {
 
@@ -12,11 +13,12 @@ namespace bign {
 enum BigImpl {
   BIG_AUTO,      // Auto-detect best
   BIG_NAIVE,     // Basic CPU
-  // Future: BIG_OPTIMIZED, BIG_AVX2, BIG_CUDA, etc.
+  BIG_KARATSUBA, // Karatsuba multiplication
+  // Future: BIG_AVX2, BIG_CUDA, etc.
 };
 
-// Implementation variant - currently only BigNumberNaive
-using BigNumVariant = std::variant<std::unique_ptr<BigNumberNaive>>;
+// Implementation variant - includes BigNumberNaive and BigNumberKaratsuba
+using BigNumVariant = std::variant<std::unique_ptr<BigNumberNaive>, std::unique_ptr<BigNumberKaratsuba>>;
 
 // Main orchestrator class - handles implementation selection
 class BigNumberCore {

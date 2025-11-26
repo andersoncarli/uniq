@@ -22,7 +22,7 @@ namespace bign {
   
   class Test {
   public:
-    Test(bool passed, const std::string& expr, const std::string& func, 
+    Test(bool passed, const std::string& expr, const std::string& /*func*/, 
          const std::string& file, int line) {
       if (passed) {
         TEST_PASSED++;
@@ -35,7 +35,7 @@ namespace bign {
       }
     }
     
-    Test(const std::exception& ex, const std::string& func, 
+    Test(const std::exception& ex, const std::string& /*func*/, 
          const std::string& file, int line) {
       if (std::string(ex.what()) == "bign::Fail") return;
       TEST_EXCEPTION++;
