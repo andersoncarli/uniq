@@ -7,6 +7,7 @@ backward::SignalHandling sh;
 #include "uniq.h"
 
 #include "State.h"
+#include "primality.test.cpp"
 
 int main(){
   uniq::SILENT_TESTS = 1; // omit success report

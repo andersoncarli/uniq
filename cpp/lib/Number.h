@@ -303,16 +303,22 @@ public:
       if(digits[i] != n.digits[i]) return false;
     return true; 
   }
+  bool operator == (digit d) const { return *this == Number(d); }
   bool operator != (const Number& n) const { return !(*this == n); }
+  bool operator != (digit d) const { return *this != Number(d); }
   bool operator <  (const Number& n) const {
     if(size() != n.size()) return size() < n.size();
     for (int i=size()-1; i >= 0; i--)
       if(digits[i] != n.digits[i]) return digits[i] < n.digits[i];
     return false;
   }
+  bool operator <  (digit d) const { return *this < Number(d); }
   bool operator >  (const Number& n) const { return n < *this; }
+  bool operator >  (digit d) const { return Number(d) < *this; }
   bool operator <= (const Number& n) const { return !(n < *this); }
+  bool operator <= (digit d) const { return !(Number(d) < *this); }
   bool operator >= (const Number& n) const { return !(*this < n); }
+  bool operator >= (digit d) const { return !(*this < Number(d)); }
 
   Digit operator [](const int i) const { return digits[i]; }
 
@@ -513,30 +519,7 @@ TEST(Number){
   CHECK(!Number(2).isZero());
   CHECK(!Number(2).isOne());
 };
-/*
 
-/*
-// multiply(a[1..p], b[1..q], base)                            // Operands
-// containing rightmost digits at index 1
-//   product=[1..p+q]                                        // Allocate
-space
-//   for result for b_i=1 to q                                          //
-for
-//   all digits in b
-//     carry=0
-//     for a_i=1 to p                                        // for all
-digits
-//     in a
-//       product[a_i + b_i - 1] += carry + a[a_i] * b[b_i]
-//       carry=product[a_i + b_i - 1] / base
-//       product[a_i + b_i - 1]=product[a_i + b_i - 1] mod base
-//     product[b_i + p]=carry                               // last Number
-//     comes from final carry
-//   return product
-
-
-  //   operator string() const { return to_string(value); }
-*/
 TEST(PI1000) {
   const string PI1000 = 
     "31415926535897932384626433832795028841971693993751058209749445923078164062"
