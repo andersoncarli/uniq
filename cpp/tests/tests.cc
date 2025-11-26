@@ -8,6 +8,8 @@ backward::SignalHandling sh;
 
 #include "State.h"
 #include "BigDigit.t.cc"
+// #include "BigNumberCore.t.cc"  // Old version - disabled
+#include "BigNumberCore2.t.cc"  // New version - testing
 #include "BigCardinal.t.cc"
 #include "BigInteger.t.cc"
 #include "BigDecimal.t.cc"

@@ -40,7 +40,7 @@ BigDecimal (decimal, inherits Integer)
 #include <vector>
 #include "BigDigit.h"
 
-namespace uniq {
+namespace bign {
 
 // Base interface for all implementations
 class IBigNumber {
@@ -71,7 +71,7 @@ public:
   virtual bool available() const = 0;
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ### 2. Implementation Classes (Flat Structure)
@@ -81,7 +81,7 @@ public:
 #pragma once
 #include "IBigNumber.h"
 
-namespace uniq {
+namespace bign {
 
 class BigNumberNaive : public IBigNumber {
 public:
@@ -101,7 +101,7 @@ public:
   bool available() const override { return true; }  // Always available
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -109,7 +109,7 @@ public:
 #pragma once
 #include "IBigNumber.h"
 
-namespace uniq {
+namespace bign {
 
 class BigNumberOptimized : public IBigNumber {
 public:
@@ -126,7 +126,7 @@ public:
   bool available() const override { return true; }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -135,7 +135,7 @@ public:
 #include "IBigNumber.h"
 #include <immintrin.h>  // AVX2 intrinsics
 
-namespace uniq {
+namespace bign {
 
 class BigNumberAVX2 : public IBigNumber {
 public:
@@ -163,7 +163,7 @@ public:
   }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -172,7 +172,7 @@ public:
 #include "IBigNumber.h"
 #include <immintrin.h>  // AVX-512 intrinsics
 
-namespace uniq {
+namespace bign {
 
 class BigNumberAVX512 : public IBigNumber {
 public:
@@ -196,7 +196,7 @@ public:
   }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -207,7 +207,7 @@ public:
 #include <arm_neon.h>
 #endif
 
-namespace uniq {
+namespace bign {
 
 class BigNumberNEON : public IBigNumber {
 public:
@@ -236,7 +236,7 @@ public:
   }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -247,7 +247,7 @@ public:
 #include <cuda_runtime.h>
 #endif
 
-namespace uniq {
+namespace bign {
 
 class BigNumberCUDA : public IBigNumber {
 private:
@@ -306,7 +306,7 @@ public:
   }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -317,7 +317,7 @@ public:
 #include <CL/cl.h>
 #endif
 
-namespace uniq {
+namespace bign {
 
 class BigNumberOpenCL : public IBigNumber {
 private:
@@ -352,7 +352,7 @@ public:
   }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ### 3. BigNumber Orchestrator with std::variant
@@ -367,7 +367,7 @@ public:
 #include "BigDigit.h"
 #include "IBigNumber.h"
 
-namespace uniq {
+namespace bign {
 
 // Forward declarations
 class BigNumberNaive;
@@ -495,7 +495,7 @@ public:
   std::vector<BigDigit>& getDigits() { return digits_; }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ### 4. Implementation Factory (All #ifdefs Here)
@@ -528,7 +528,7 @@ public:
 #endif
 // ... other includes
 
-namespace uniq {
+namespace bign {
 
 BigNumVariant BigNumber::createBest() {
   // Try implementations in priority order (highest first)
@@ -641,7 +641,7 @@ bool BigNumber::operator==(const BigNumber& n) const {
   return result == 0;
 }
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ### 5. Derived Classes
@@ -651,7 +651,7 @@ bool BigNumber::operator==(const BigNumber& n) const {
 #pragma once
 #include "BigNumber.h"
 
-namespace uniq {
+namespace bign {
 
 class BigCardinal : public BigNumber {
 public:
@@ -675,7 +675,7 @@ public:
   using BigNumber::getDigits;
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ```cpp
@@ -683,7 +683,7 @@ public:
 #pragma once
 #include "BigCardinal.h"
 
-namespace uniq {
+namespace bign {
 
 class BigInteger : public BigCardinal {
   i8 signal;
@@ -703,7 +703,7 @@ public:
   }
 };
 
-} // namespace uniq
+} // namespace bign
 ```
 
 ## Build System Configuration

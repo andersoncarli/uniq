@@ -8,7 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread")
 
-add_executable(${PROJECT_NAME} tests.cc)
+add_executable(${PROJECT_NAME} tests.cc
+  ../lib/BigNumberCore2.cpp
+  ../lib/BigNumberNaive2.cpp
+)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
