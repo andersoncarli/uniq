@@ -10,6 +10,7 @@ backward::SignalHandling sh;
 #include "BigDigit.t.cc"
 #include "BigCardinal.t.cc"
 #include "BigInteger.t.cc"
+#include "BigDecimal.t.cc"
 #include "BigPrime.t.cc"
 
 int main(){

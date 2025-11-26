@@ -1,4 +1,4 @@
-# BigNum Refactoring Plan
+# BigNumber Refactoring Plan
 
 ## Quick Wins Completed ✓
 
@@ -96,7 +96,7 @@
 
 ### Priority 4: API Completeness (MEDIUM)
 
-**Current State**: Missing several standard BigNum operations
+**Current State**: Missing several standard BigNumber operations
 
 **Required Changes**:
 
@@ -223,7 +223,7 @@ static Number random_bits(int num_bits); // random number with N bits
 - [ ] Signed arithmetic fully functional
 - [ ] Performance improved 2-10x for large numbers (depending on operation)
 - [ ] Memory usage reduced by 20-30%
-- [ ] API complete with all standard BigNum operations
+- [ ] API complete with all standard BigNumber operations
 - [ ] Works on 32-bit and 64-bit platforms
 - [ ] Comprehensive error handling
 

@@ -177,6 +177,12 @@ public:
     return r *= n; 
   }
 
+  // Helper: Get digit at position (0 = least significant, size()-1 = most significant)
+  digit getDigitAt(int pos) const {
+    if(pos < 0 || pos >= size()) return 0;
+    return digits[pos].value;
+  }
+  
   pair<BigCardinal, BigCardinal> divide(const BigCardinal& n) const {
     if(n.isZero()) throw FlowException(1, DIV);
     if(isZero()) return make_pair(BigCardinal(0), BigCardinal(0));
@@ -186,19 +192,111 @@ public:
       return make_pair(BigCardinal(0), *this);
     }
     
-    BigCardinal quotient(0);
+    // Long division: work from most significant to least significant
+    // digits[0] = LSB, digits[size()-1] = MSB (little-endian)
     BigCardinal remainder = *this;
+    int div_size = n.size();
     
-    while(remainder >= n) {
-      BigCardinal temp = n;
-      BigCardinal multiple(1);
-      while((temp * BigCardinal(2)) <= remainder) {
-        temp = temp * BigCardinal(2);
-        multiple = multiple * BigCardinal(2);
+    // Quotient will have at most (remainder.size() - div_size + 1) digits
+    int quot_size = remainder.size() - div_size + 1;
+    if(quot_size <= 0) quot_size = 1;
+    
+    BigCardinal quotient(0);
+    quotient.digits.resize(quot_size, BigDigit(0));
+    
+    // Process each quotient digit from MSB (quot_size-1) to LSB (0)
+    for(int q_idx = quot_size - 1; q_idx >= 0; q_idx--) {
+      // Get the part of remainder we're working with
+      // We need to look at digits starting from q_idx
+      int rem_start = q_idx;
+      int rem_end = min(rem_start + div_size + 1, (int)remainder.size());
+      
+      if(rem_end <= rem_start) continue;
+      
+      // Extract the window of remainder digits (MSB aligned)
+      BigCardinal rem_part(0);
+      rem_part.digits.resize(rem_end - rem_start, BigDigit(0));
+      for(int i = rem_start; i < rem_end; i++) {
+        rem_part.digits[i - rem_start].value = remainder.digits[i].value;
       }
-      remainder = remainder - temp;
-      quotient = quotient + multiple;
+      
+      // Compare: if rem_part < n, this quotient digit is 0
+      if(rem_part < n) continue;
+      
+      // Estimate quotient digit using top 2 digits
+      digit div_top = n.digits[div_size - 1].value;
+      if(div_top == 0 && div_size > 1) div_top = n.digits[div_size - 2].value;
+      
+      int rem_part_size = rem_part.size();
+      uoverflow rem_top = 0;
+      if(rem_part_size > 0) {
+        rem_top = rem_part.digits[rem_part_size - 1].value;
+        if(rem_part_size > 1) {
+          rem_top = (rem_top << BITS(digit)) | rem_part.digits[rem_part_size - 2].value;
+        }
+      }
+      
+      if(div_top == 0) continue;
+      
+      // Estimate quotient digit
+      // Use simple division for estimation, then refine
+      uoverflow q_est = rem_top / (uoverflow)div_top;
+      digit max_digit = (digit)-1;
+      if(q_est > (uoverflow)max_digit) q_est = max_digit;
+      digit q_digit = (digit)q_est;
+      
+      if(q_digit == 0) continue;
+      
+      // Try different values of q_digit until we find one that works
+      bool success = false;
+      for(int attempt = 0; attempt < 10 && !success; attempt++) {
+        digit test_q = q_digit;
+        if(attempt > 0 && attempt % 2 == 1 && test_q < max_digit) {
+          test_q = q_digit + (attempt + 1) / 2;
+        } else if(attempt > 0 && attempt % 2 == 0 && test_q > 0) {
+          test_q = q_digit - attempt / 2;
+        }
+        if(test_q == 0) break;
+        
+        // Multiply n by test_q
+        BigCardinal product(0);
+        product.digits.resize(div_size + 1, BigDigit(0));
+        
+        digit carry = 0;
+        for(int i = 0; i < div_size; i++) {
+          uoverflow prod = (uoverflow)n.digits[i].value * (uoverflow)test_q;
+          digit prod_digit = (digit)prod;
+          digit prod_ov = prod >> BITS(digit);
+          uoverflow total = (uoverflow)prod_digit + (uoverflow)carry;
+          digit total_digit = (digit)total;
+          digit total_ov = total >> BITS(digit);
+          product.digits[i].value = total_digit;
+          carry = prod_ov + total_ov;
+        }
+        if(carry) product.digits[div_size].value = carry;
+        while(product.digits.size() > 1 && product.digits.back() == BigDigit(0)) 
+          product.digits.pop_back();
+        
+        // Shift product left by q_idx positions
+        if(q_idx > 0) {
+          product.digits.insert(product.digits.begin(), q_idx, BigDigit(0));
+        }
+        
+        // Check if we can subtract
+        if(remainder >= product) {
+          remainder.subtractAbs(product);
+          quotient.digits[q_idx].value = test_q;
+          success = true;
+          break;
+        }
+      }
     }
+    
+    // Remove leading zeros
+    while(quotient.digits.size() > 1 && quotient.digits.back() == BigDigit(0)) 
+      quotient.digits.pop_back();
+    while(remainder.digits.size() > 1 && remainder.digits.back() == BigDigit(0)) 
+      remainder.digits.pop_back();
     
     return make_pair(quotient, remainder);
   }
