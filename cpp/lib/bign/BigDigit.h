@@ -1,14 +1,12 @@
 #pragma once
-#include "numtypes.h"
 #include <string>
-#include <vector>
 #include <algorithm>
-#include <stdexcept>
 #include <functional>
-#include <cassert>
-#include <sstream>
+#include <exception>
 #include <iostream>
-
+#include <sstream>
+#include <cassert>
+#include "numtypes.h"
 namespace bign{
 
 typedef uinteger digit;
@@ -78,7 +76,7 @@ struct BigDigit { // ======================================================== Bi
 
   inline digit size() const { // msb
     digit i = 0, n=value; if(!n) return 0;
-    for(digit k = __WORDSIZE/2; k>0; k /=2) 
+    for(digit k = BITS(digit)/2; k>0; k /=2) 
       if (n >= (digit(1) << k)) { i += k; n >>= k; };
     return i+1;
  }
@@ -179,11 +177,7 @@ struct BigDigit { // ======================================================== Bi
 
 inline std::ostream& operator<<(std::ostream& os, const BigDigit& d) { return os << d.format(); }
 
-inline digit factorial(BigDigit n) { 
-  if(n.value <= 1) return 1;
-  BigDigit prev(n.value - 1);
-  return factorial(prev) * n.value;
-}
+inline digit factorial(BigDigit n) { return n <= BigDigit(1) ? 1 : factorial(n-BigDigit(1))*n; }
 
 }; // namespace bign
 

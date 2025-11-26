@@ -2,24 +2,23 @@
 #include <variant>
 #include <memory>
 #include <vector>
-#include "IBigNumber.h"
 #include "BigDigit.h"
-#include "BigNumberNaive.h"
+#include "IBigNumber.h"
+#include "BigNumberNaive.h"  // Need full definition for variant
 
 namespace bign {
 
 // Implementation type enum
 enum BigImpl {
   BIG_AUTO,      // Auto-detect best
-  BIG_NAIVE      // Basic CPU (always available)
+  BIG_NAIVE,     // Basic CPU
+  // Future: BIG_OPTIMIZED, BIG_AVX2, BIG_CUDA, etc.
 };
 
-// Implementation variant - currently only naive
-using BigNumVariant = std::variant<
-  std::unique_ptr<BigNumberNaive>
->;
+// Implementation variant - currently only BigNumberNaive
+using BigNumVariant = std::variant<std::unique_ptr<BigNumberNaive>>;
 
-// Orchestrator class - handles implementation selection
+// Main orchestrator class - handles implementation selection
 class BigNumberCore {
 protected:
   BigNumVariant impl_;
@@ -40,13 +39,23 @@ protected:
     }, impl_);
   }
   
+  template<typename Op>
+  void visitImpl(Op&& op) const {
+    std::visit([&](const auto& impl_ptr) {
+      if(impl_ptr) {
+        op(*impl_ptr);
+      }
+    }, impl_);
+  }
+
 public:
-  BigNumberCore();
-  BigNumberCore(BigImpl type);
+  // Constructors
+  BigNumberCore();  // Auto-detect best
+  BigNumberCore(BigImpl type);  // Explicit selection
   BigNumberCore(const BigNumberCore& other);
   BigNumberCore(BigNumberCore&& other) noexcept;
-  virtual ~BigNumberCore() = default;
   
+  // Assignment
   BigNumberCore& operator=(const BigNumberCore& other);
   BigNumberCore& operator=(BigNumberCore&& other) noexcept;
   
@@ -55,16 +64,11 @@ public:
   BigImpl getImplementation() const { return active_type_; }
   const char* getImplementationName() const;
   
-  // Access to digits (for derived classes and implementations)
-  const std::vector<BigDigit>& getDigits() const { return digits_; }
-  std::vector<BigDigit>& getDigits() { return digits_; }
-  void setDigits(const std::vector<BigDigit>& d) { digits_ = d; }
-  
   // Core operations (delegate to implementation)
   void add(const BigNumberCore& n);
   void subtract(const BigNumberCore& n);
   void multiply(const BigNumberCore& n);
-  void divide(const BigNumberCore& n, BigNumberCore& quotient, BigNumberCore& remainder) const;
+  void divide(const BigNumberCore& n, BigNumberCore& quotient, BigNumberCore& remainder);
   
   // Comparison
   int compare(const BigNumberCore& n) const;
@@ -76,6 +80,14 @@ public:
   void bitwiseNot();
   void shiftLeft(int bits);
   void shiftRight(int bits);
+  
+  // Accessors
+  const std::vector<BigDigit>& getDigits() const { return digits_; }
+  std::vector<BigDigit>& getDigits() { return digits_; }
+  int size() const { return (int)digits_.size(); }
+  bool isZero() const { return digits_.empty() || (digits_.size() == 1 && digits_[0] == BigDigit(0)); }
+  bool isOne() const { return digits_.size() == 1 && digits_[0] == BigDigit(1); }
 };
 
 } // namespace bign
+

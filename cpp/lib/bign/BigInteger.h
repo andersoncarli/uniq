@@ -1,8 +1,13 @@
 #pragma once
 #include "BigCardinal.h"
+#include <string>
+#include <sstream>
+#include <cassert>
+#include <iostream>
 namespace bign {
 
 class BigInteger : public BigCardinal {
+public:
   i8 signal;
   
 public:
@@ -44,7 +49,7 @@ public:
     if(digits_.empty() || isZero()) return std::string(1, map[0]);
     std::ostringstream ss;
     if(signal < 0) ss << "-";
-    for(int i=0; i < digits_.size(); i++)
+    for(int i=0; i < (int)digits_.size(); i++)
       ss << digits_[i].format(base, map);
     std::string result = ss.str();
     while(result.length() > 1 && result[0] == map[0]) {

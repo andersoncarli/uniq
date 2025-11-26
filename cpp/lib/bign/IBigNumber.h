@@ -29,8 +29,9 @@ public:
   
   // Metadata
   virtual const char* name() const = 0;
-  virtual int priority() const = 0;  // Higher = better (for auto-detection)
+  virtual int priority() const = 0;  // Higher = better
   virtual bool available() const = 0;
 };
 
 } // namespace bign
+

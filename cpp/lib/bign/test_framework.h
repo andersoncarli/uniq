@@ -38,7 +38,7 @@ public:
         std::cout << std::string(80, '=') << "\n";
         
         for (const auto& test : tests) {
-            std::cout << "\033[38;5;202m" << test.name << " \033[0m";
+            std::cout << test.name << " ";
             try {
                 test.func();
                 std::cout << "\033[1;32m✓\033[0m";
@@ -106,15 +106,25 @@ public:
     void test_##name()
 
 #define CHECK(expr) \
-    bign_test::TestAssertion((expr), #expr, __FILE__, __LINE__)
+    do { \
+        if (!(expr)) { \
+            throw std::runtime_error("CHECK failed: " #expr); \
+        } \
+    } while(0)
 
-#define CHECK_EXCEPTION(expr) \
-    try { \
-        (expr); \
-        throw std::runtime_error("Expected exception but none was thrown"); \
-    } catch (...) { \
-        bign_test::TestAssertion(true, #expr, __FILE__, __LINE__); \
-    }
+#define CHECK_EQ(a, b) \
+    do { \
+        if ((a) != (b)) { \
+            throw std::runtime_error("CHECK_EQ failed: " #a " != " #b); \
+        } \
+    } while(0)
+
+#define CHECK_NE(a, b) \
+    do { \
+        if ((a) == (b)) { \
+            throw std::runtime_error("CHECK_NE failed: " #a " == " #b); \
+        } \
+    } while(0)
 
 } // namespace bign_test
 

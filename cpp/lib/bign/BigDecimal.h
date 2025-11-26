@@ -185,8 +185,7 @@ public:
   BigDecimal& operator *= (const BigDecimal& n) {
     static_cast<BigInteger&>(*this) = static_cast<BigInteger&>(*this) * static_cast<const BigInteger&>(n);
     decimal_places = decimal_places + n.decimal_places;
-    // Normalize to remove trailing zeros from fractional part
-    normalize();
+    // Don't normalize here - preserve precision for multiplication results
     return *this;
   }
 
@@ -286,24 +285,36 @@ public:
   }
 
   string format(int places = -1) const {
-    if(places < 0) places = decimal_places;
+    if(places < 0) {
+      // Use current decimal places, but round/truncate based on normalization
+      places = decimal_places;
+    }
     
-    BigInteger value = static_cast<const BigInteger&>(*this);
+    // If places specified, round first
+    BigDecimal to_format = *this;
+    if(places >= 0 && places < decimal_places) {
+      to_format = round(places);
+    } else if(places > decimal_places) {
+      to_format.setDecimalPlaces(places);
+    }
+    
+    BigInteger value = static_cast<const BigInteger&>(to_format);
     bool negative = value.isNegative();
     if(negative) value = value.abs();
     
     string int_str = value.format();
+    int actual_places = to_format.decimal_places;
     
-    if(places == 0) {
+    if(actual_places == 0) {
       return negative ? "-" + int_str : int_str;
     }
     
     // Pad with zeros if needed to have enough digits for decimal places
-    while((int)int_str.length() < places) {
+    while((int)int_str.length() < actual_places) {
       int_str = "0" + int_str;
     }
     
-    if(int_str.length() == places) {
+    if(int_str.length() == actual_places) {
       // All digits are fractional
       string result = "0." + int_str;
       // Remove trailing zeros
@@ -314,7 +325,7 @@ public:
       return negative ? "-" + result : result;
     }
     
-    size_t dot_pos = int_str.length() - places;
+    size_t dot_pos = int_str.length() - actual_places;
     if(dot_pos >= int_str.length()) {
       // Safety: shouldn't happen, but handle it
       return negative ? "-" + int_str : int_str;
@@ -338,6 +349,7 @@ public:
 
   int getDecimalPlaces() const { return decimal_places; }
   void setDecimalPlaces(int places) { 
+    if(places < 0) return; // Invalid
     if(places < decimal_places) {
       // Truncate
       BigInteger scale(1);
@@ -354,7 +366,7 @@ public:
       static_cast<BigInteger&>(*this) = static_cast<BigInteger&>(*this) * scale;
     }
     decimal_places = places;
-    normalize();
+    // Don't normalize when explicitly setting decimal places - user wants this precision
   }
   
   // Comparison operators (inherit from BigInteger, but need to align decimals)

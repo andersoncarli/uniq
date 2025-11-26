@@ -1,11 +1,10 @@
 #include "BigNumberCore.h"
 #include "BigNumberNaive.h"
-#include "BigDigit.h"
-#include <stdexcept>
 
 namespace bign {
 
 BigNumVariant BigNumberCore::createBest() {
+  // Currently only BigNumberNaive is available
   return std::make_unique<BigNumberNaive>();
 }
 
@@ -20,17 +19,23 @@ BigNumVariant BigNumberCore::create(BigImpl type) {
   }
 }
 
-BigNumberCore::BigNumberCore() : impl_(createBest()), active_type_(BIG_AUTO), digits_(1, BigDigit(0)) {}
+BigNumberCore::BigNumberCore() : impl_(createBest()), active_type_(BIG_AUTO) {
+  digits_.push_back(BigDigit(0));
+}
 
-BigNumberCore::BigNumberCore(BigImpl type) : impl_(create(type)), active_type_(type), digits_(1, BigDigit(0)) {}
+BigNumberCore::BigNumberCore(BigImpl type) : impl_(create(type)), active_type_(type) {
+  digits_.push_back(BigDigit(0));
+}
 
 BigNumberCore::BigNumberCore(const BigNumberCore& other) 
-  : impl_(create(other.active_type_)), active_type_(other.active_type_), digits_(other.digits_) {}
+  : impl_(create(other.active_type_)), active_type_(other.active_type_), digits_(other.digits_) {
+}
 
 BigNumberCore::BigNumberCore(BigNumberCore&& other) noexcept
   : impl_(std::move(other.impl_)), active_type_(other.active_type_), digits_(std::move(other.digits_)) {
   other.active_type_ = BIG_AUTO;
-  other.digits_ = std::vector<BigDigit>(1, BigDigit(0));
+  other.digits_.clear();
+  other.digits_.push_back(BigDigit(0));
 }
 
 BigNumberCore& BigNumberCore::operator=(const BigNumberCore& other) {
@@ -48,7 +53,8 @@ BigNumberCore& BigNumberCore::operator=(BigNumberCore&& other) noexcept {
     active_type_ = other.active_type_;
     digits_ = std::move(other.digits_);
     other.active_type_ = BIG_AUTO;
-    other.digits_ = std::vector<BigDigit>(1, BigDigit(0));
+    other.digits_.clear();
+    other.digits_.push_back(BigDigit(0));
   }
   return *this;
 }
@@ -59,9 +65,11 @@ void BigNumberCore::setImplementation(BigImpl type) {
 }
 
 const char* BigNumberCore::getImplementationName() const {
-  return std::visit([](auto& impl_ptr) -> const char* {
-    return impl_ptr ? impl_ptr->name() : "Unknown";
-  }, impl_);
+  const char* name = "Unknown";
+  visitImpl([&](const auto& impl) {
+    name = impl.name();
+  });
+  return name;
 }
 
 void BigNumberCore::add(const BigNumberCore& n) {
@@ -82,17 +90,15 @@ void BigNumberCore::multiply(const BigNumberCore& n) {
   });
 }
 
-void BigNumberCore::divide(const BigNumberCore& n, BigNumberCore& quotient, BigNumberCore& remainder) const {
-  std::visit([&](auto& impl_ptr) {
-    if(impl_ptr) {
-      impl_ptr->divide(digits_, n.digits_, quotient.digits_, remainder.digits_);
-    }
-  }, impl_);
+void BigNumberCore::divide(const BigNumberCore& n, BigNumberCore& quotient, BigNumberCore& remainder) {
+  visitImpl([&](auto& impl) {
+    impl.divide(digits_, n.digits_, quotient.digits_, remainder.digits_);
+  });
 }
 
 int BigNumberCore::compare(const BigNumberCore& n) const {
   int result = 0;
-  const_cast<BigNumberCore*>(this)->visitImpl([&](auto& impl) {
+  visitImpl([&](const auto& impl) {
     result = impl.compare(digits_, n.digits_);
   });
   return result;
@@ -135,3 +141,4 @@ void BigNumberCore::shiftRight(int bits) {
 }
 
 } // namespace bign
+
